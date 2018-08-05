@@ -43,11 +43,11 @@ public class GhostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ghost);
         AssetManager assetManager = getAssets();
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
+
+          getAssets().open();
+          //TODO: Fix this tomorrow
+
+
         onStart(null);
     }
 
