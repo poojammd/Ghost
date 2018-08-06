@@ -23,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,16 +38,23 @@ public class GhostActivity extends AppCompatActivity {
     private GhostDictionary dictionary;
     private boolean userTurn = false;
     private Random random = new Random();
+    private TextView gameStatusView;
+    private TextView ghostTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ghost);
+        gameStatusView = (TextView) findViewById(R.id.gameStatus);
+        ghostTextView = (TextView) findViewById(R.id.ghostText);
         AssetManager assetManager = getAssets();
-
-          getAssets().open();
-          //TODO: Fix this tomorrow
-
+        try {
+            InputStream inputStream = assetManager.open("words.txt");
+            dictionary = new SimpleDictionary(inputStream);
+        } catch (IOException e) {
+            Toast toast = Toast.makeText(this, "Could not load dictionary", Toast.LENGTH_LONG);
+            toast.show();
+        }
 
         onStart(null);
     }
@@ -95,7 +103,11 @@ public class GhostActivity extends AppCompatActivity {
 
     private void computerTurn() {
         TextView label = (TextView) findViewById(R.id.gameStatus);
-        // Do computer turn stuff then make it the user's turn again
+        if (ghostTextView.length()>=4)
+        {
+          gameStatusView.setText("Victory");
+          get
+        }
         userTurn = true;
         label.setText(USER_TURN);
     }
@@ -108,11 +120,22 @@ public class GhostActivity extends AppCompatActivity {
      */
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
+        if (userTurn) {
+            userTurn = false;
+
+            char k = (char) event.getUnicodeChar();
+            if (Character.isLetter(k)) {
+                ghostTextView.append(k+ "");
+                userTurn = false;
+
+                computerTurn();
+
+                return true;
+            }
+        }
+
         return super.onKeyUp(keyCode, event);
+
+
     }
 }

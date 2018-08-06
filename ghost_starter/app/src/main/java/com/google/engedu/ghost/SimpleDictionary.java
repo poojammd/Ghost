@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SimpleDictionary implements GhostDictionary {
     private ArrayList<String> words;
+    Random random=new Random();
 
     public SimpleDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
@@ -33,6 +35,7 @@ public class SimpleDictionary implements GhostDictionary {
             if (word.length() >= MIN_WORD_LENGTH)
               words.add(line.trim());
         }
+
     }
 
     @Override
@@ -42,7 +45,21 @@ public class SimpleDictionary implements GhostDictionary {
 
     @Override
     public String getAnyWordStartingWith(String prefix) {
-        return null;
+        if (prefix.isEmpty())
+        {
+           prefix= words.get(random.nextInt());
+        }
+
+        String low=words.get(1);
+        String high=words.get(words.size());
+        String mid=words.get(words.size()/2);
+        while()
+
+            return null;
+
+
+
+
     }
 
     @Override
