@@ -24,7 +24,7 @@ import java.util.Random;
 
 public class SimpleDictionary implements GhostDictionary {
     private ArrayList<String> words;
-    Random random=new Random();
+    Random r=new Random();
 
     public SimpleDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
@@ -45,22 +45,56 @@ public class SimpleDictionary implements GhostDictionary {
 
     @Override
     public String getAnyWordStartingWith(String prefix) {
-        if (prefix.isEmpty())
-        {
-           prefix= words.get(random.nextInt());
-        }
+        if (prefix == null || prefix.equals("")) {
+            return words.get(r.nextInt(words.size()));
+        } else {
+            int low = 0, high = words.size() - 1;
+            int mid;
+            String t;
 
-        String low=words.get(1);
-        String high=words.get(words.size());
-        String mid=words.get(words.size()/2);
-        while()
+            while(low < high) {
+                mid = (low + high) / 2;
+                t = words.get(mid);
+                if(t.startsWith(prefix)) {
+                    return t;
+                } else if(prefix.compareTo(t) > 0) {
+                    // LHS is bigger
+                    low = mid + 1;
+                } else {
+                    // RHS is bigger
+                    high = mid - 1;
+                }
+            }
 
             return null;
-
-
-
-
+        }
     }
+	
+    /* public String getAnyWordStartingWith(String prefix) {
+        if (prefix == null || prefix.equals("")) {
+            return words.get(r.nextInt(words.size()));
+        } else {
+            int low = 0, high = words.size() - 1;
+            int mid;
+            String t;
+
+            while(low < high) {
+                mid = (low + high) / 2;
+                t = words.get(mid);
+                if(t.startsWith(prefix)) {
+                    return t;
+                } else if(prefix.compareTo(t) > 0) {
+                    // LHS is bigger
+                    low = mid + 1;
+                } else {
+                    // RHS is bigger
+                    high = mid - 1;
+                }
+            }
+
+            return null;
+        }
+    }*/
 
     @Override
     public String getGoodWordStartingWith(String prefix) {

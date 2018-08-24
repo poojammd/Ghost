@@ -19,6 +19,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +41,8 @@ public class GhostActivity extends AppCompatActivity {
     private Random random = new Random();
     private TextView gameStatusView;
     private TextView ghostTextView;
+    Button Restart;
+    Button Challenge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,8 @@ public class GhostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ghost);
         gameStatusView = (TextView) findViewById(R.id.gameStatus);
         ghostTextView = (TextView) findViewById(R.id.ghostText);
+        Restart=(Button) findViewById(R.id.button2);
+        Challenge= (Button) findViewById(R.id.button);
         AssetManager assetManager = getAssets();
         try {
             InputStream inputStream = assetManager.open("words.txt");
@@ -57,6 +62,32 @@ public class GhostActivity extends AppCompatActivity {
         }
 
         onStart(null);
+        Restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onStart(view);
+            }
+        });
+
+        Challenge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ghostText = ghostTextView.getText().toString();
+
+                if (ghostText.length() >= 4 && dictionary.isWord(ghostText)) {
+                    gameStatusView.setText("User Won");
+                } else {
+                    String k = dictionary.getAnyWordStartingWith(ghostText);
+                    Log.d("Ghost", "Word starting with " + ghostText + "is " + k);
+
+                    if(k == null) {
+                        gameStatusView.setText("User won");
+                    } else {
+                        gameStatusView.setText("Computer won | Possible word - "+k);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -81,12 +112,8 @@ public class GhostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Handler for the "Reset" button.
-     * Randomly determines whether the game starts with a user turn or a computer turn.
-     * @param view
-     * @return true
-     */
+
+
     public boolean onStart(View view) {
         userTurn = random.nextBoolean();
         TextView text = (TextView) findViewById(R.id.ghostText);
@@ -102,22 +129,26 @@ public class GhostActivity extends AppCompatActivity {
     }
 
     private void computerTurn() {
-        TextView label = (TextView) findViewById(R.id.gameStatus);
-        if (ghostTextView.length()>=4)
-        {
-          gameStatusView.setText("Victory");
-          get
+
+        String ghostText = ghostTextView.getText().toString();
+        Log.d("Ghost", "Word: " + ghostText);
+        if (ghostTextView.length() >= 4 && dictionary.isWord(ghostText))
+            gameStatusView.setText("Computer Won");
+        else {
+            String k = dictionary.getAnyWordStartingWith(ghostText);
+            Log.d("Ghost", "Word starting with " + ghostText + " is " + k);
+
+            if (k == null) {
+                gameStatusView.setText("Computer Won");
+            } else {
+                ghostTextView.append(k.charAt(ghostText.length()) + "");
+                userTurn = true;
+                gameStatusView.setText(USER_TURN);
+            }
         }
-        userTurn = true;
-        label.setText(USER_TURN);
     }
 
-    /**
-     * Handler for user key presses.
-     * @param keyCode
-     * @param event
-     * @return whether the key stroke was handled.
-     */
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (userTurn) {
